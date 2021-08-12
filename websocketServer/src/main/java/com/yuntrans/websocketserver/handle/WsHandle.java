@@ -53,6 +53,8 @@ public class WsHandle extends TextWebSocketHandler {
         }
     }
 
+//    public void
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         super.handleMessage(session, message);
@@ -93,5 +95,9 @@ public class WsHandle extends TextWebSocketHandler {
     }
     private static int getOnlineCount() {
         return onlineCount;
+    }
+
+    public static CopyOnWriteArraySet<WebSocketSession> getWebSocketSets() {
+        return webSocketSet;
     }
 }
