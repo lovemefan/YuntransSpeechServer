@@ -5,7 +5,6 @@
  */
 package com.yuntrans.websocketserver.handle;
 
-import com.yuntrans.websocketserver.server.WebsocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
