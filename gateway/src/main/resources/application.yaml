@@ -1,0 +1,25 @@
+server:
+  port: 8011
+
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: 222.197.219.26:8848
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          lower-case-service-id: false
+      routes:
+        - id: Up-Order
+          uri: http://127.0.0.1:8090
+          predicates:
+            - Path=/order/**
+          filters:
+            - StripPrefix=1 #去除第一个级前缀
