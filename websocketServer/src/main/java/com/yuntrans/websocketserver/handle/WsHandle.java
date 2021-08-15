@@ -5,16 +5,17 @@
  */
 package com.yuntrans.websocketserver.handle;
 
+import com.yuntrans.websocketserver.pojo.ResponseBody;
+import com.yuntrans.websocketserver.wsEnum.WsStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import javax.websocket.Session;
 import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -23,10 +24,13 @@ public class WsHandle extends TextWebSocketHandler {
     //当前在线连接数
     private static Integer onlineCount = 0;
     //存放每个客户端对应的MyWebSocket对象
-    private static CopyOnWriteArraySet<WebSocketSession> webSocketSet = new CopyOnWriteArraySet<WebSocketSession>();
+    private static ConcurrentHashMap<String, WebSocketSession> webSocketMap = new ConcurrentHashMap<String, WebSocketSession>();
     private WebSocketSession session;
     //接收sid
     private String sid = "";
+
+    @Value("${websocket.timeout-time:600000}")
+    private Integer timeout;
 
     public WsHandle() {
         super();
@@ -42,18 +46,62 @@ public class WsHandle extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         this.session = session;
-        webSocketSet.add(session);     //加入set中
-        this.sid = "yuntrans@" + UUID.randomUUID().toString().replace("-", "");
-        addOnlineCount();         //在线数加1
-        try {
-            handleTextMessage(session,new TextMessage("connect success"));
-            log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + getOnlineCount());
-        } catch (IOException e) {
-            log.error("websocket IO Exception");
+        this.sid = session.getAttributes().get("sid").toString();
+        boolean auth = Boolean.parseBoolean(session.getAttributes().get("auth").toString());
+        long date = Long.parseLong(session.getAttributes().get("date").toString());
+
+        //在线数加1
+        addOnlineCount();
+        //授权失败
+        if (!auth) {
+            this.sendMessage(WsStatus.UNAUTHORIZED, "appKey or secret illegal");
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+        }else if (System.currentTimeMillis() - date > timeout) {
+            // 连接超时，应该是客户端抓包后请求
+            this.sendMessage(WsStatus.ILLEGAL_CONNECTION, "Illegal Connection");
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+        }else{
+
+            webSocketMap.put(this.sid, session);     //加入set中
+            try {
+                this.sendMessage(WsStatus.SUCCESS, "Connection success");
+                log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + getOnlineCount());
+            } catch (IOException e) {
+                log.error("websocket IO Exception");
+            }
         }
+
     }
 
-//    public void
+    public void sendMessage(WebSocketSession session, String data) throws IOException {
+        session.sendMessage(new TextMessage(data));
+    }
+
+    public void sendMessage(String data) throws IOException {
+        this.session.sendMessage(new TextMessage(data));
+    }
+    public void sendMessage(ResponseBody responseBody) throws IOException {
+        this.session.sendMessage(new TextMessage(responseBody.toString()));
+    }
+
+    public void sendMessage(WsStatus status, String message) throws IOException {
+        this.sendMessage(status, message, null);
+    }
+
+    public void sendMessage(WsStatus status, String message, String data) throws IOException {
+        this.session.sendMessage(
+                new TextMessage(
+                        new ResponseBody(
+                                status.name(),
+                                status.getStatusCode(),
+                                message,
+                                data
+                        ).toString()));
+    }
+
+    public void sendMessage(WebSocketSession session, TextMessage data) throws IOException {
+        session.sendMessage(data);
+    }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -80,9 +128,10 @@ public class WsHandle extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         //从set中删除
-        webSocketSet.remove(session);
+        webSocketMap.remove(session.getAttributes().get("sid").toString());
         subOnlineCount();
         log.info("释放的sid为："+sid);
+        log.info("" + webSocketMap.isEmpty());
         log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
     }
 
@@ -97,7 +146,7 @@ public class WsHandle extends TextWebSocketHandler {
         return onlineCount;
     }
 
-    public static CopyOnWriteArraySet<WebSocketSession> getWebSocketSets() {
-        return webSocketSet;
+    public static ConcurrentHashMap<String, WebSocketSession> getWebSocketMap() {
+        return webSocketMap;
     }
 }

@@ -30,4 +30,7 @@ spring:
         # 连接池中的最小空闲连接 默认 0
         min-idle: 0
 
+websocket:
+  timeout-time: 600000
+
 
