@@ -8,9 +8,10 @@ package com.yuntrans.websocketserver.wsEnum;
 public enum WsStatus {
     SUCCESS(10000),
     FAILED(10001),
-    UNAUTHORIZAED(10002),
+    UNAUTHORIZED(10002),
     FORBIDDEN(10003),
     TIMEOUT(10004),
+    ILLEGAL_CONNECTION(10005),
     ;
 
 
@@ -26,6 +27,7 @@ public enum WsStatus {
     public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
+
 
     @Override
     public String toString() {
