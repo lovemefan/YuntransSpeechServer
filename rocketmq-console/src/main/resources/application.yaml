@@ -1,0 +1,25 @@
+server:
+  port: 8011
+
+spring:
+  application:
+    name: rocketmq-console
+
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: 222.197.219.26:8848
+#    stream:
+#      rocketmq:
+#        binder:
+#          name-server: 222.197.219.26:9876
+logging:
+  level:
+    root: info
+
+
+rocketmq:
+  config:
+    namesrvAddr=: 222.197.219.26:9876
