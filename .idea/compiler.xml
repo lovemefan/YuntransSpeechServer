@@ -9,12 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="websocketServer" />
         <module name="gateway" />
+        <module name="rocketmq-console" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="gateway" target="11" />
+      <module name="rocketmq-console" target="11" />
       <module name="websocketServer" target="11" />
-      <module name="YuntransAsrServer" target="11" />
+      <module name="YuntransSpeechServer" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
