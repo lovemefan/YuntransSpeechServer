@@ -1,11 +1,6 @@
-/**
- * @Time : 2021/8/12 15:47
- * @Author : lovemefan
- * @Email : lovemefan@outlook.com
- */
 package com.yuntrans.websocketserver.handle;
 
-import com.yuntrans.websocketserver.pojo.ResponseBody;
+import com.yuntrans.websocketserver.model.ResponseBody;
 import com.yuntrans.websocketserver.wsEnum.WsStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +12,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @Time : 2021/8/12 15:47
+ * @Author : lovemefan
+ * @Email : lovemefan@outlook.com
+ */
 @Slf4j
 @Component
 public class WsHandle extends TextWebSocketHandler {
@@ -92,6 +92,7 @@ public class WsHandle extends TextWebSocketHandler {
         this.session.sendMessage(
                 new TextMessage(
                         new ResponseBody(
+                                this.sid,
                                 status.name(),
                                 status.getStatusCode(),
                                 message,

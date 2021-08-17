@@ -56,18 +56,18 @@ public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
             return false;
         }
 
-        signatureOraigin.add("host: " + serverHttpRequest.getLocalAddress().toString());
+
         signatureOraigin.add("date: " + date);
         signatureOraigin.add("appKey: " + appKey);
         signatureOraigin.add("GET: " + serverHttpRequest.getURI().getRawPath());
 
-        System.out.println(signatureOraigin.toString());
+        log.debug(signatureOraigin.toString());
 
         // 获取Redis中的数据
         String secret = (String) redisTemplate.boundValueOps(appKey).get();
-        String signature_sha = EncryptUtil.HmacSHA256Encrypt(signatureOraigin.toString(), "2kCPFNALTgPbi9GIzOTCw1bPkvsjhwI9gsMKoRocKW8=");
+        String signature_sha = EncryptUtil.HmacSHA256Encrypt(signatureOraigin.toString(), secret);
         String signature = Base64.getEncoder().encodeToString(signature_sha.getBytes());
-        System.out.println("signature" + signature);
+        log.debug("secret: " + secret + ",signature: " + signature);
         //测试使用
         map.put("auth", true);
 //        map.put("auth", signature.equals(signatureClient));
