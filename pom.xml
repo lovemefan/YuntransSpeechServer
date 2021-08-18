@@ -12,6 +12,8 @@
     <modules>
         <module>websocketServer</module>
         <module>gateway</module>
+        <module>rocketmq-console</module>
+        <module>chinese-asr-backend</module>
     </modules>
 
     <properties>

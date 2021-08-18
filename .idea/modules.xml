@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/YuntransSpeechServer.iml" filepath="$PROJECT_DIR$/YuntransSpeechServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chinese-backend/chinese-asr-backend.iml" filepath="$PROJECT_DIR$/chinese-backend/chinese-asr-backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/rocketmq-console/rocketmq-console.iml" filepath="$PROJECT_DIR$/rocketmq-console/rocketmq-console.iml" />
       <module fileurl="file://$PROJECT_DIR$/websocketServer/websocketServer.iml" filepath="$PROJECT_DIR$/websocketServer/websocketServer.iml" />

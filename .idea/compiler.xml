@@ -9,10 +9,12 @@
         <outputRelativeToContentRoot value="true" />
         <module name="websocketServer" />
         <module name="gateway" />
+        <module name="chinese-asr-backend" />
         <module name="rocketmq-console" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="chinese-asr-backend" target="1.8" />
       <module name="gateway" target="11" />
       <module name="rocketmq-console" target="11" />
       <module name="websocketServer" target="11" />
