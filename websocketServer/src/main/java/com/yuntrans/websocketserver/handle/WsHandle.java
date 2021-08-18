@@ -21,10 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WsHandle extends TextWebSocketHandler {
 
-    //当前在线连接数
-    private static Integer onlineCount = 0;
-    //存放每个客户端对应的MyWebSocket对象
-    private static ConcurrentHashMap<String, WebSocketSession> webSocketMap = new ConcurrentHashMap<String, WebSocketSession>();
     private WebSocketSession session;
     //接收sid
     private String sid = "";
@@ -50,8 +46,6 @@ public class WsHandle extends TextWebSocketHandler {
         boolean auth = Boolean.parseBoolean(session.getAttributes().get("auth").toString());
         long date = Long.parseLong(session.getAttributes().get("date").toString());
 
-        //在线数加1
-        addOnlineCount();
         //授权失败
         if (!auth) {
             this.sendMessage(WsStatus.UNAUTHORIZED, "appKey or secret illegal");
@@ -62,10 +56,10 @@ public class WsHandle extends TextWebSocketHandler {
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }else{
 
-            webSocketMap.put(this.sid, session);     //加入set中
+            WsManagement.addWebSocketSession(this.sid, session);     //加入set中
             try {
                 this.sendMessage(WsStatus.SUCCESS, "Connection success");
-                log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + getOnlineCount());
+                log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + WsManagement.getOnlineCount());
             } catch (IOException e) {
                 log.error("websocket IO Exception");
             }
@@ -129,25 +123,9 @@ public class WsHandle extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         //从set中删除
-        webSocketMap.remove(session.getAttributes().get("sid").toString());
-        subOnlineCount();
+        WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
         log.info("释放的sid为："+sid);
-        log.info("" + webSocketMap.isEmpty());
-        log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
-    }
-
-    private static void addOnlineCount() {
-        onlineCount ++;
-    }
-
-    private static void subOnlineCount() {
-        onlineCount --;
-    }
-    private static int getOnlineCount() {
-        return onlineCount;
-    }
-
-    public static ConcurrentHashMap<String, WebSocketSession> getWebSocketMap() {
-        return webSocketMap;
+        log.info("" + WsManagement.getWebSocketMap().isEmpty());
+        log.info("有一连接关闭！当前在线人数为" + WsManagement.getOnlineCount());
     }
 }
