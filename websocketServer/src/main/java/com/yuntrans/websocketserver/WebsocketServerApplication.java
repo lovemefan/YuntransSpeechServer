@@ -7,7 +7,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.messaging.Source;
 
 @SpringBootApplication
-@EnableBinding({ Source.class, Sink.class })
+//@EnableBinding({ Source.class, Sink.class })
 public class WebsocketServerApplication {
 
     public static void main(String[] args) {

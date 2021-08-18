@@ -28,7 +28,7 @@ import java.util.UUID;
 public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler, Map<String, Object> map) throws Exception {
@@ -64,7 +64,13 @@ public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
         log.debug(signatureOraigin.toString());
 
         // 获取Redis中的数据
-        String secret = (String) redisTemplate.boundValueOps(appKey).get();
+        String secret = redisTemplate.boundValueOps(appKey).get();
+
+        if (secret == null) {
+            log.info("appKey: " + appKey + " is empty");
+            return false;
+        }
+
         String signature_sha = EncryptUtil.HmacSHA256Encrypt(signatureOraigin.toString(), secret);
         String signature = Base64.getEncoder().encodeToString(signature_sha.getBytes());
         log.debug("secret: " + secret + ",signature: " + signature);

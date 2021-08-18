@@ -46,6 +46,9 @@ public class WsHandle extends TextWebSocketHandler {
         boolean auth = Boolean.parseBoolean(session.getAttributes().get("auth").toString());
         long date = Long.parseLong(session.getAttributes().get("date").toString());
 
+        WsManagement.addWebSocketSession(this.sid, session);     //加入set中
+
+
         //授权失败
         if (!auth) {
             this.sendMessage(WsStatus.UNAUTHORIZED, "appKey or secret illegal");
@@ -56,7 +59,6 @@ public class WsHandle extends TextWebSocketHandler {
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }else{
 
-            WsManagement.addWebSocketSession(this.sid, session);     //加入set中
             try {
                 this.sendMessage(WsStatus.SUCCESS, "Connection success");
                 log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + WsManagement.getOnlineCount());

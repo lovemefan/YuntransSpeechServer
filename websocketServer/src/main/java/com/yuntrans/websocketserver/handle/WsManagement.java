@@ -30,7 +30,6 @@ public class WsManagement {
      */
     public static void addWebSocketSession(String sid, WebSocketSession session) {
         webSocketMap.put(sid, session);
-        onlineCount ++;
     }
 
     /**
@@ -39,7 +38,6 @@ public class WsManagement {
      */
     public static void deleteWebSocketSession(String sid) {
         webSocketMap.remove(sid);
-        onlineCount --;
     }
 
     /**
@@ -53,6 +51,6 @@ public class WsManagement {
 
 
     public static Integer getOnlineCount() {
-        return onlineCount;
+        return webSocketMap.size();
     }
 }

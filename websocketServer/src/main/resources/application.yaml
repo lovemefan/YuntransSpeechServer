@@ -16,7 +16,7 @@ spring:
       bindings:
         output:
           content-type: application/json
-          destination: test
+          destination: speech
       rocketmq:
         binder:
           # 配置rocketmq的nameserver地址
