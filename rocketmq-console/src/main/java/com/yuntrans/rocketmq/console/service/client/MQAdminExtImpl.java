@@ -37,7 +37,21 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.common.protocol.RequestCode;
 import org.apache.rocketmq.common.protocol.ResponseCode;
-import org.apache.rocketmq.common.protocol.body.*;
+import org.apache.rocketmq.common.protocol.body.BrokerStatsData;
+import org.apache.rocketmq.common.protocol.body.ClusterAclVersionInfo;
+import org.apache.rocketmq.common.protocol.body.ClusterInfo;
+import org.apache.rocketmq.common.protocol.body.ConsumeMessageDirectlyResult;
+import org.apache.rocketmq.common.protocol.body.ConsumeStatsList;
+import org.apache.rocketmq.common.protocol.body.ConsumerConnection;
+import org.apache.rocketmq.common.protocol.body.ConsumerRunningInfo;
+import org.apache.rocketmq.common.protocol.body.GroupList;
+import org.apache.rocketmq.common.protocol.body.KVTable;
+import org.apache.rocketmq.common.protocol.body.ProducerConnection;
+import org.apache.rocketmq.common.protocol.body.QueryConsumeQueueResponseBody;
+import org.apache.rocketmq.common.protocol.body.QueueTimeSpan;
+import org.apache.rocketmq.common.protocol.body.SubscriptionGroupWrapper;
+import org.apache.rocketmq.common.protocol.body.TopicConfigSerializeWrapper;
+import org.apache.rocketmq.common.protocol.body.TopicList;
 import org.apache.rocketmq.common.protocol.route.TopicRouteData;
 import org.apache.rocketmq.common.subscription.SubscriptionGroupConfig;
 import com.yuntrans.rocketmq.console.util.JsonUtil;
@@ -77,28 +91,28 @@ public class MQAdminExtImpl implements MQAdminExt {
         MQAdminInstance.threadLocalMQAdminExt().createAndUpdateTopicConfig(addr, config);
     }
 
-    @Override
-    public void createAndUpdatePlainAccessConfig(String s, PlainAccessConfig plainAccessConfig) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+    @Override public void createAndUpdatePlainAccessConfig(String addr,
+        PlainAccessConfig plainAccessConfig) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+        
+    }
+
+    @Override public void deletePlainAccessConfig(String addr,
+        String accessKey) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
 
     }
 
-    @Override
-    public void deletePlainAccessConfig(String s, String s1) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+    @Override public void updateGlobalWhiteAddrConfig(String addr,
+        String globalWhiteAddrs) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
 
     }
 
-    @Override
-    public void updateGlobalWhiteAddrConfig(String s, String s1) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
-
-    }
-
-    @Override
-    public ClusterAclVersionInfo examineBrokerClusterAclVersionInfo(String s) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+    @Override public ClusterAclVersionInfo examineBrokerClusterAclVersionInfo(
+        String addr) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
         return null;
     }
 
-    @Override
-    public AclConfig examineBrokerClusterAclConfig(String s) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+    @Override public AclConfig examineBrokerClusterAclConfig(
+        String addr) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
         return null;
     }
 
@@ -258,8 +272,8 @@ public class MQAdminExtImpl implements MQAdminExt {
     }
 
     @Override
-    public void deleteSubscriptionGroup(String s, String s1, boolean b) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
-
+    public void deleteSubscriptionGroup(String addr, String groupName, boolean removeOffset) throws RemotingException, MQBrokerException, InterruptedException, MQClientException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -519,18 +533,19 @@ public class MQAdminExtImpl implements MQAdminExt {
         return null;
     }
 
-    @Override
-    public QueryConsumeQueueResponseBody queryConsumeQueue(String s, String s1, int i, long l, int i1, String s2) throws InterruptedException, RemotingTimeoutException, RemotingSendRequestException, RemotingConnectException, MQClientException {
+    @Override public QueryConsumeQueueResponseBody queryConsumeQueue(String brokerAddr, String topic,
+        int queueId, long index, int count,
+        String consumerGroup) throws InterruptedException, RemotingTimeoutException, RemotingSendRequestException, RemotingConnectException, MQClientException {
         return null;
     }
 
-    @Override
-    public boolean resumeCheckHalfMessage(String s) throws RemotingException, MQClientException, InterruptedException, MQBrokerException {
+    @Override public boolean resumeCheckHalfMessage(
+        String msgId) throws RemotingException, MQClientException, InterruptedException, MQBrokerException {
         return false;
     }
 
-    @Override
-    public boolean resumeCheckHalfMessage(String s, String s1) throws RemotingException, MQClientException, InterruptedException, MQBrokerException {
+    @Override public boolean resumeCheckHalfMessage(String topic,
+        String msgId) throws RemotingException, MQClientException, InterruptedException, MQBrokerException {
         return false;
     }
 }

@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import com.yuntrans.rocketmq.console.config.RMQConfigure;
-import com.yuntrans.rocketmq.console.exception.ServiceException;
 import com.yuntrans.rocketmq.console.service.DashboardCollectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ import org.springframework.stereotype.Service;
 public class DashboardCollectServiceImpl implements DashboardCollectService {
 
     @Resource
-    private RMQConfigure rmqConfigure;
+    private RMQConfigure configure;
 
     private final static Logger log = LoggerFactory.getLogger(DashboardCollectServiceImpl.class);
 
@@ -134,20 +133,23 @@ public class DashboardCollectServiceImpl implements DashboardCollectService {
 
     @Override
     public Map<String, List<String>> getBrokerCache(String date) {
-        String dataLocationPath = rmqConfigure.getConsoleCollectData();
+        String dataLocationPath = configure.getConsoleCollectData();
         File file = new File(dataLocationPath + date + ".json");
         if (!file.exists()) {
-            throw Throwables.propagate(new ServiceException(1, "This date have't data!"));
+            log.info(String.format("No dashboard data for broker cache data: %s", date));
+            return Maps.newHashMap();
         }
         return jsonDataFile2map(file);
     }
 
     @Override
     public Map<String, List<String>> getTopicCache(String date) {
-        String dataLocationPath = rmqConfigure.getConsoleCollectData();
+        String dataLocationPath = configure.getConsoleCollectData();
         File file = new File(dataLocationPath + date + "_topic" + ".json");
         if (!file.exists()) {
-            throw Throwables.propagate(new ServiceException(1, "This date have't data!"));
+            log.info(String.format("No dashboard data for data: %s", date));
+            //throw Throwables.propagate(new ServiceException(1, "This date have't data!"));
+            return Maps.newHashMap();
         }
         return jsonDataFile2map(file);
     }

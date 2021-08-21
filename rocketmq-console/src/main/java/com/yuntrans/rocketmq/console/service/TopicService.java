@@ -29,7 +29,7 @@ import com.yuntrans.rocketmq.console.model.request.TopicConfigInfo;
 import java.util.List;
 
 public interface TopicService {
-    TopicList fetchAllTopicList();
+    TopicList fetchAllTopicList(boolean skipSysProcess);
 
     TopicStatsTable stats(String topic);
 

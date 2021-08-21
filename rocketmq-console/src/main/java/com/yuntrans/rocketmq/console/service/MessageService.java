@@ -20,6 +20,8 @@ package com.yuntrans.rocketmq.console.service;
 import org.apache.rocketmq.common.Pair;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.protocol.body.ConsumeMessageDirectlyResult;
+import com.yuntrans.rocketmq.console.model.MessagePage;
+import com.yuntrans.rocketmq.console.model.request.MessageQuery;
 import org.apache.rocketmq.tools.admin.api.MessageTrack;
 import com.yuntrans.rocketmq.console.model.MessageView;
 
@@ -47,5 +49,11 @@ public interface MessageService {
 
     ConsumeMessageDirectlyResult consumeMessageDirectly(String topic, String msgId, String consumerGroup,
         String clientId);
+
+
+    MessagePage queryMessageByPage(MessageQuery query);
+
+
+
 
 }
