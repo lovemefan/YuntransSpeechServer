@@ -61,7 +61,7 @@ public class WsHandle extends TextWebSocketHandler {
 
             try {
                 this.sendMessage(WsStatus.SUCCESS, "Connection success");
-                log.info("有新窗口开始监听:" + sid + ",当前在线人数为:" + WsManagement.getOnlineCount());
+                log.info("当前线程" + Thread.currentThread().getId() +  "有新窗口开始监听:" + sid + ",当前在线人数为:" + WsManagement.getOnlineCount());
             } catch (IOException e) {
                 log.error("websocket IO Exception");
             }
