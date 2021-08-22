@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>chinese-asr-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>chinese-backend</name>
-    <description>chinese-backend</description>
+    <name>chinese-asr-backend</name>
+    <description>chinese asr backend</description>
 
     <parent>
         <groupId>com.yuntrans</groupId>
@@ -25,7 +25,6 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
-
     </dependencies>
 
 
