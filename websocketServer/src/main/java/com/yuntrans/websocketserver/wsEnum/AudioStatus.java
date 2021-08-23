@@ -1,11 +1,11 @@
-package com.yuntrans.websocketserver.model;
+package com.yuntrans.websocketserver.wsEnum;
 
 /**
  * @Time : 2021/8/21 17:36
  * @Author : lovemefan
  * @Email : lovemefan@outlook.com
  */
-public enum audioStatus {
+public enum AudioStatus {
     START,
     END
 }

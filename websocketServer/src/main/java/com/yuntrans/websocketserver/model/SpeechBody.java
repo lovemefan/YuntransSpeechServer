@@ -1,5 +1,6 @@
 package com.yuntrans.websocketserver.model;
 
+import com.yuntrans.websocketserver.wsEnum.AudioStatus;
 import lombok.Data;
 
 /**
@@ -15,13 +16,13 @@ public class SpeechBody {
     // 音频格式
     private String format;
     // 当前语音片段
-    private audioStatus status;
+    private AudioStatus status;
     // 语音片段id
     private String speechId;
     // 语音数据的base64编码
     private String data;
 
-    public SpeechBody(String languageCode, String format, audioStatus status, String speechId, String data) {
+    public SpeechBody(String languageCode, String format, AudioStatus status, String speechId, String data) {
         this.languageCode = languageCode;
         this.format = format;
         this.status = status;

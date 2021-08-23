@@ -20,7 +20,7 @@ public class MQReceiveServiceImpl implements MQReceiveService {
 
     @StreamListener("transcription-zh-input")
     @Override
-    public void receive(@Payload TranscriptionBody speech) {
-        log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), speech.toString());
+    public void receive(@Payload TranscriptionBody transcription) {
+        log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), transcription.toString());
     }
 }

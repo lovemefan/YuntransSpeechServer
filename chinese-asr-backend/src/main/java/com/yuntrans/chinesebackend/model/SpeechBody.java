@@ -15,16 +15,10 @@ public class SpeechBody {
     // 音频格式
     private String format;
     // 当前语音片段
-    private audioStatus status;
+    private AudioStatus status;
     // 语音片段id
     private String speechId;
     // 语音数据的base64编码
     private String data;
 
-}
-
-
-enum audioStatus {
-    START,
-    END
 }
