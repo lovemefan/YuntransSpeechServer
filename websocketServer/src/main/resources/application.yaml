@@ -33,11 +33,12 @@ spring:
             consumer:
               enabled: true # 是否开启消费，默认为 true
               broadcasting: false # 是否使用广播消费，默认为 false 使用集群消费，如果要使用广播消费值设成true。
+
           speech-zh-output:
             # RocketMQ Producer 配置项，对应 RocketMQProducerProperties 类
             producer:
               group: speech-zh-group
-              sync: true # 是否同步发送消息，默认为 false 异步。
+              sync: false # 是否同步发送消息，默认为 false 异步。
   redis:
     database: 0
     host: 222.197.219.26
@@ -62,4 +63,13 @@ websocket:
   timeout-time: 600000
 
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
+
+  endpoint:
+    health:
+      show-details: always

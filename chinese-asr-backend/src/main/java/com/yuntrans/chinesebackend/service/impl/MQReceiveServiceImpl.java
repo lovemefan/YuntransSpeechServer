@@ -19,6 +19,9 @@ public class MQReceiveServiceImpl implements MQReceiveService {
     @StreamListener("speech-zh-input")
     @Override
     public void receive(@Payload SpeechBody speech) {
+
+        // 负责根据tag 分发
+
         log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), speech.toString());
     }
 }

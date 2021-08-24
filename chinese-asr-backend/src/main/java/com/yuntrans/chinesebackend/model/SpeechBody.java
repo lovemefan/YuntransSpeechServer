@@ -16,9 +16,20 @@ public class SpeechBody {
     private String format;
     // 当前语音片段
     private AudioStatus status;
-    // 语音片段id
-    private String speechId;
+    // sid
+    private String sid;
     // 语音数据的base64编码
     private String data;
+
+    public SpeechBody() {
+    }
+
+    public SpeechBody(String languageCode, String format, AudioStatus status, String sid, String data) {
+        this.languageCode = languageCode;
+        this.format = format;
+        this.status = status;
+        this.sid = sid;
+        this.data = data;
+    }
 
 }

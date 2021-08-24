@@ -10,12 +10,12 @@ import lombok.Data;
 
 @Data
 public class TranscriptionBody {
-    private String speechId;
+    private String sid;
     private String result;
     private TranscriptionStatus status;
 
-    public TranscriptionBody(String speechId, String result, TranscriptionStatus status) {
-        this.speechId = speechId;
+    public TranscriptionBody(String sid, String result, TranscriptionStatus status) {
+        this.sid = sid;
         this.result = result;
         this.status = status;
     }

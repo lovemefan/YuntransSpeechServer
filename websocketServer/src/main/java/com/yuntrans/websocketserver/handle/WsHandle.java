@@ -1,8 +1,12 @@
 package com.yuntrans.websocketserver.handle;
 
 import com.yuntrans.websocketserver.model.ResponseBody;
+import com.yuntrans.websocketserver.model.SpeechBody;
+import com.yuntrans.websocketserver.service.impl.MQSenderServiceImpl;
+import com.yuntrans.websocketserver.wsEnum.AudioStatus;
 import com.yuntrans.websocketserver.wsEnum.WsStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -25,6 +29,9 @@ public class WsHandle extends TextWebSocketHandler {
     //接收sid
     private String sid = "";
 
+    @Autowired
+    private MQSenderServiceImpl mqSender;
+
     @Value("${websocket.timeout-time:600000}")
     private Integer timeout;
 
@@ -43,10 +50,16 @@ public class WsHandle extends TextWebSocketHandler {
         super.afterConnectionEstablished(session);
         this.session = session;
         this.sid = session.getAttributes().get("sid").toString();
+
+
         boolean auth = Boolean.parseBoolean(session.getAttributes().get("auth").toString());
         long date = Long.parseLong(session.getAttributes().get("date").toString());
 
-        WsManagement.addWebSocketSession(this.sid, session);     //加入set中
+        // 发送建立连接信息
+        mqSender.send(new SpeechBody(null, null, AudioStatus.START, this.sid, null));
+
+        //加入set中
+        WsManagement.addWebSocketSession(this.sid, session);
 
 
         //授权失败
@@ -119,13 +132,20 @@ public class WsHandle extends TextWebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         super.handleTransportError(session, exception);
+
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
+        // 发送建立连接信息
+        mqSender.send(new SpeechBody(null, null, AudioStatus.START, this.sid, null));
         //从set中删除
         WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
+
+        // 发送连接断开信息
+        mqSender.send(new SpeechBody(null, null, AudioStatus.END, this.sid, null));
+
         log.info("释放的sid为："+sid);
         log.info("" + WsManagement.getWebSocketMap().isEmpty());
         log.info("有一连接关闭！当前在线人数为" + WsManagement.getOnlineCount());

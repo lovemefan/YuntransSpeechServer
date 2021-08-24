@@ -22,7 +22,16 @@ public class WebsocketController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
     public String test(HttpServletRequest request) throws Exception {
-        mqSender.send(new SpeechBody("zh", "wav", AudioStatus.START, "1233", "something"));
+        mqSender.send(new SpeechBody("zh", "wav", AudioStatus.START, "" + System.currentTimeMillis()/100, "something"));
+        System.out.println("发送了一条消息");
+        return "ok";
+    }
+
+
+    @RequestMapping(value = "/test_tag", method = RequestMethod.GET)
+    @ResponseBody
+    public String testTag(HttpServletRequest request) throws Exception {
+        mqSender.sendWithTags(new SpeechBody("zh", "wav", AudioStatus.START, "" + System.currentTimeMillis()/100, "something with tag"), "zh0456789");
         System.out.println("发送了一条消息");
         return "ok";
     }

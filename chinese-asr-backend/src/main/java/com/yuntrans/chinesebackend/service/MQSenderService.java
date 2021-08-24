@@ -9,4 +9,5 @@ import com.yuntrans.chinesebackend.model.TranscriptionBody;
  */
 public interface MQSenderService {
     public boolean send(TranscriptionBody message) throws Exception;
+    public  boolean sendWithTags(TranscriptionBody msg, String tag) throws Exception;
 }

@@ -1,5 +1,6 @@
 package com.yuntrans.websocketserver.model;
 
+import com.yuntrans.websocketserver.wsEnum.TranscriptionStatus;
 import lombok.Data;
 
 /**
@@ -9,15 +10,17 @@ import lombok.Data;
  */
 @Data
 public class TranscriptionBody {
-    private String speechId;
+    private String sid;
     private String result;
     private TranscriptionStatus status;
 
-}
+    public TranscriptionBody() {
+    }
 
-enum TranscriptionStatus {
-    PARTIAL,
-    FINAL,
-    ERROR,
-    END
+    public TranscriptionBody(String sid, String result, TranscriptionStatus status) {
+        this.sid = sid;
+        this.result = result;
+        this.status = status;
+    }
+
 }

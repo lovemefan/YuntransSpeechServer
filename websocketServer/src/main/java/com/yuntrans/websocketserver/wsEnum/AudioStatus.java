@@ -7,5 +7,6 @@ package com.yuntrans.websocketserver.wsEnum;
  */
 public enum AudioStatus {
     START,
+    SEND,
     END
 }
