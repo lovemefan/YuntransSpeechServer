@@ -12,6 +12,7 @@ public enum WsStatus {
     FORBIDDEN(10003),
     TIMEOUT(10004),
     ILLEGAL_CONNECTION(10005),
+    FORMAT_ERROR(10016)
     ;
 
 
