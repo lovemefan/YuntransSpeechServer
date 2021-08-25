@@ -7,6 +7,6 @@ package com.yuntrans.chinesebackend.model;
  */
 public enum AudioStatus {
     START,
-    SEND,
+    PARTIAL,
     END
 }
