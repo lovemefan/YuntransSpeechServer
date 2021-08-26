@@ -1,5 +1,6 @@
 package com.yuntrans.chinesebackend.service.impl;
 
+import com.yuntrans.chinesebackend.model.SpeechBody;
 import com.yuntrans.chinesebackend.model.TranscriptionBody;
 import com.yuntrans.chinesebackend.service.AbsAsyncAsrEngineHandlerService;
 import com.yuntrans.chinesebackend.service.MQSenderService;
@@ -64,11 +65,13 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
                 super.handleTextMessage(session, message);
                 TranscriptionBody transcription = JsonToTranscriptionBody.parse(message, sid);
                 if (transcription != null) {
-                    that.sendeMessage(transcription, sid);
+                    mqSenderService.sendWithKeys(transcription, sid);
                 }
             }
             @Override
             public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+                System.out.println("当前队列数量： " + ClientManagement.getQueueCount());
+                ClientManagement.addMessageQueue(sid, new SpeechBody());
                 ClientManagement.removeWsSessions(sid);
                 ClientManagement.removeMessageQueue(sid);
             }
@@ -82,14 +85,19 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
             e.printStackTrace();
         }
 
-        System.out.println("当前监听sid队列线程id： " + Thread.currentThread().getId());
+
         // 监听当前sid 队列
         while(ClientManagement.getWebSocketSession(sid) != null && ClientManagement.getWebSocketSession(sid).isOpen()) {
             try {
                 WebSocketSession session = ClientManagement.getWebSocketSession(sid);
-                // 获取队列中的元素，为空时阻塞
-                System.out.println("发送数据中");
-                byte[] data = Base64.getDecoder().decode(ClientManagement.getMessageFromQueue(sid).getData());
+
+                SpeechBody speech = ClientManagement.getMessageFromQueue(sid);
+
+                // 防止该线程被永久阻塞, 结束时会向该队列发送一个内容全为null的speechBody
+                if (speech.getStatus() == null) {break;}
+
+                byte[] data = Base64.getDecoder().decode(speech.getData());
+                    System.out.println("当前处理text线程id： " + Thread.currentThread().getName() + " " + speech.getSid() + " 发送完毕 " );
                 if (data != null) {
                     session.sendMessage(new BinaryMessage(data));
                 }
@@ -101,14 +109,4 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
         System.out.println("session 已断开");
     }
 
-
-    @Async(value = "asrSenderThreadPool")
-    public void sendeMessage(TranscriptionBody transcription, String sid) {
-        System.out.println("当前处理text线程id： " + Thread.currentThread().getId() + " transcription receive: " + transcription.toString());
-        try {
-            mqSenderService.sendWithKeys(transcription, sid);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

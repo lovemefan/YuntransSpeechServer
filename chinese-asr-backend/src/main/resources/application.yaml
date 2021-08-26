@@ -54,9 +54,9 @@ management:
 asrbackend:
   asrHandler:
     #核心线程数,它是可以同时被执行的线程数量
-    corePoolSize: 5
+    corePoolSize: 50
     #最大线程数,缓冲队列满了之后会申请超过核心线程数的线程
-    maxPoolSize: 10
+    maxPoolSize: 60
     # 线程池数量
     num-thread-pool: 10
   asrSender:

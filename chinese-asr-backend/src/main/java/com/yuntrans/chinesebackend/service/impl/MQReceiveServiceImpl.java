@@ -36,6 +36,9 @@ public class MQReceiveServiceImpl implements MQReceiveService {
     @StreamListener("speech-zh-input")
     @Override
     public void receive(@Payload SpeechBody speech) {
+
+        System.out.println(Thread.currentThread().getName() + " 收到mq消息" + speech.getSid());
+
         // 负责根据sid 分发
         if (speech.getStatus() == AudioStatus.START) {
             //启动消费线程
@@ -43,9 +46,7 @@ public class MQReceiveServiceImpl implements MQReceiveService {
         }else if (speech.getStatus() == AudioStatus.END) {
             try {
                 ClientManagement.closedWebsocket(speech.getSid());
-                ClientManagement.removeWsSessions(speech.getSid());
-                ClientManagement.removeMessageQueue(speech.getSid());
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 try {
                     mqSenderService.send(new TranscriptionBody(speech.getSid(), null, TranscriptionStatus.ENGINE_ERROR));
                 } catch (Exception ex) {

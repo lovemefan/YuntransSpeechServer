@@ -1,6 +1,7 @@
 package com.yuntrans.chinesebackend.service.impl;
 
 import com.yuntrans.chinesebackend.model.SpeechBody;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
@@ -50,7 +51,7 @@ public class ClientManagement {
     }
 
     /**
-     *  根据sid 返回队列末尾元素
+     *  根据sid 返回队列末尾元素, 会阻塞
      * @param sid
      * @return
      */
@@ -60,6 +61,9 @@ public class ClientManagement {
         }else {
            return null;
         }
+    }
+    public static LinkedBlockingQueue<SpeechBody> getQueueBySid(String sid) {
+        return messageQueue.get(sid);
     }
 
     /**
@@ -99,9 +103,10 @@ public class ClientManagement {
         WebSocketSession session = getWebSocketSession(sid);
         if (session != null) {
             session.sendMessage(new TextMessage("{ \"signal\": \"end\" }"));
-            session.close();
         }
     }
 
-
+    public static int getQueueCount() {
+        return messageQueue.size();
+    }
 }

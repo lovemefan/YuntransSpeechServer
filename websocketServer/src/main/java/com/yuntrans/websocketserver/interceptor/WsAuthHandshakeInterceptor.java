@@ -65,8 +65,6 @@ public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
             signatureOraigin.add("appKey: " + appKey);
             signatureOraigin.add("GET " + serverHttpRequest.getURI().getRawPath());
 
-            System.out.println(signatureOraigin.toString());
-
             // 获取Redis中的数据
             String secret = redisTemplate.boundValueOps(appKey).get();
 
