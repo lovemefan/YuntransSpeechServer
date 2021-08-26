@@ -40,6 +40,8 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
 
         CountDownLatch wsConnection = new CountDownLatch(1);
 
+        AsyncAseEngineHandlerService that = this;
+
         WebSocketConnectionManager manager = new WebSocketConnectionManager(client, new TextWebSocketHandler() {
             @Override
             public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -58,13 +60,11 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
             @Override
             protected void handleTextMessage(WebSocketSession session, TextMessage message)
                     throws Exception {
-                System.out.println("当前处理text线程id： " + Thread.currentThread().getId() + " message receive: " + message.getPayload());
 
                 super.handleTextMessage(session, message);
                 TranscriptionBody transcription = JsonToTranscriptionBody.parse(message, sid);
                 if (transcription != null) {
-                    System.out.println("当前处理text线程id： " + Thread.currentThread().getId() + " transcription receive: " + transcription.toString());
-                    mqSenderService.sendWithKeys(transcription, sid);
+                    that.sendeMessage(transcription, sid);
                 }
             }
             @Override
@@ -99,5 +99,16 @@ public class AsyncAseEngineHandlerService extends AbsAsyncAsrEngineHandlerServic
 
         }
         System.out.println("session 已断开");
+    }
+
+
+    @Async(value = "asrSenderThreadPool")
+    public void sendeMessage(TranscriptionBody transcription, String sid) {
+        System.out.println("当前处理text线程id： " + Thread.currentThread().getId() + " transcription receive: " + transcription.toString());
+        try {
+            mqSenderService.sendWithKeys(transcription, sid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -27,14 +27,17 @@ public class MQReceiveServiceImpl implements MQReceiveService {
     @Override
     public void receive(@Payload TranscriptionBody transcription) {
         String sid = transcription.getSid();
-        WebSocketSession session = WsManagement.getSession(sid);
-        try {
-            if (session != null) {
-                session.sendMessage(new TextMessage(transcription.toJson()));
+
+        if (sid != null) {
+            WebSocketSession session = WsManagement.getSession(sid);
+            try {
+                if (session != null) {
+                    session.sendMessage(new TextMessage(transcription.toJson()));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), transcription.toString());
         }
-        log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), transcription.toString());
     }
 }

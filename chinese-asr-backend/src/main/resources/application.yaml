@@ -52,12 +52,20 @@ management:
 
 # 项目相关配置
 asrbackend:
-  #核心线程数,它是可以同时被执行的线程数量
-  corePoolSize: 5
-  #最大线程数,缓冲队列满了之后会申请超过核心线程数的线程
-  maxPoolSize: 10
-  # 线程池数量
-  num-thread-pool: 10
+  asrHandler:
+    #核心线程数,它是可以同时被执行的线程数量
+    corePoolSize: 5
+    #最大线程数,缓冲队列满了之后会申请超过核心线程数的线程
+    maxPoolSize: 10
+    # 线程池数量
+    num-thread-pool: 10
+  asrSender:
+    #核心线程数,它是可以同时被执行的线程数量
+    corePoolSize: 5
+    #最大线程数,缓冲队列满了之后会申请超过核心线程数的线程
+    maxPoolSize: 10
+    # 线程池数量
+    num-thread-pool: 10
 
   engineUri: ws://222.197.219.24:5003/asr/v1
 
