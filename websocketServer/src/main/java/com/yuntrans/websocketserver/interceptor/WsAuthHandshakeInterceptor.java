@@ -8,7 +8,9 @@ package com.yuntrans.websocketserver.interceptor;
 import com.yuntrans.websocketserver.utils.EncryptUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -30,6 +32,9 @@ public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Value("${websocket.signature.enable:true}")
+    private boolean isSignature;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler, Map<String, Object> map) throws Exception {
 
@@ -40,43 +45,45 @@ public class WsAuthHandshakeInterceptor implements HandshakeInterceptor {
 
 
         HttpServletRequest request = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
-        // 获取参数
-        System.out.println(request.getParameter("date"));
-        System.out.println(request.getParameter("appKey"));
-        System.out.println(request.getParameter("signature"));
 
-        String date = request.getParameter("date");
-        String appKey =  request.getParameter("appKey");
-        String signatureClient = request.getParameter("signature");
-        map.put("date", date);
-        map.put("appKey", appKey);
-        map.put("signature", signatureClient);
+        // 开启签名验证
+        if (isSignature) {
+            String date = request.getParameter("date");
+            String appKey =  request.getParameter("appKey");
+            String signatureClient = request.getParameter("signature");
+            map.put("date", date);
+            map.put("appKey", appKey);
+            map.put("signature", signatureClient);
 
-        if (date == null || appKey == null || signatureClient == null) {
-            return false;
+            if (date == null || appKey == null || signatureClient == null) {
+                serverHttpResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE);
+                return false;
+            }
+
+
+            signatureOraigin.add("date: " + date);
+            signatureOraigin.add("appKey: " + appKey);
+            signatureOraigin.add("GET " + serverHttpRequest.getURI().getRawPath());
+
+            System.out.println(signatureOraigin.toString());
+
+            // 获取Redis中的数据
+            String secret = redisTemplate.boundValueOps(appKey).get();
+
+            if (secret == null) {
+                log.info("appKey: " + appKey + " is empty");
+                serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return false;
+            }
+
+            String signature = EncryptUtil.HmacSHA256Encrypt(signatureOraigin.toString(), secret);
+            log.info("secret: " + secret + ",signature: " + signature);
+            map.put("auth", signature.equals(signatureClient));
+        }else {
+            map.put("date", System.currentTimeMillis());
+            map.put("auth", true);
         }
 
-
-        signatureOraigin.add("date: " + date);
-        signatureOraigin.add("appKey: " + appKey);
-        signatureOraigin.add("GET: " + serverHttpRequest.getURI().getRawPath());
-
-        log.debug(signatureOraigin.toString());
-
-        // 获取Redis中的数据
-        String secret = redisTemplate.boundValueOps(appKey).get();
-
-        if (secret == null) {
-            log.info("appKey: " + appKey + " is empty");
-            return false;
-        }
-
-        String signature_sha = EncryptUtil.HmacSHA256Encrypt(signatureOraigin.toString(), secret);
-        String signature = Base64.getEncoder().encodeToString(signature_sha.getBytes());
-        log.debug("secret: " + secret + ",signature: " + signature);
-        //测试使用
-        map.put("auth", true);
-//        map.put("auth", signature.equals(signatureClient));
 
         return true;
     }

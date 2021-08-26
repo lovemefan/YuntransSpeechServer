@@ -12,4 +12,6 @@ import com.yuntrans.websocketserver.model.TranscriptionBody;
 public interface MQSenderService {
     public boolean send(SpeechBody message) throws Exception;
     public  boolean sendWithTags(SpeechBody msg, String tag) throws Exception;
+    public  boolean sendWithKeys(SpeechBody msg, String key) throws Exception;
+
 }

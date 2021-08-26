@@ -49,6 +49,9 @@ public class WsManagement {
         webSocketMap.remove(sid, webSocketSession);
     }
 
+    public static WebSocketSession getSession(String sid) {
+        return webSocketMap.get(sid);
+    }
 
     public static Integer getOnlineCount() {
         return webSocketMap.size();

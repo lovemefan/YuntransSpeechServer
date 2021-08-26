@@ -3,6 +3,7 @@ package com.yuntrans.websocketserver.handle;
 import com.yuntrans.websocketserver.model.ResponseBody;
 import com.yuntrans.websocketserver.model.SpeechBody;
 import com.yuntrans.websocketserver.service.impl.MQSenderServiceImpl;
+import com.yuntrans.websocketserver.utils.AudioMessageCheck;
 import com.yuntrans.websocketserver.wsEnum.AudioStatus;
 import com.yuntrans.websocketserver.wsEnum.WsStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +56,6 @@ public class WsHandle extends TextWebSocketHandler {
         boolean auth = Boolean.parseBoolean(session.getAttributes().get("auth").toString());
         long date = Long.parseLong(session.getAttributes().get("date").toString());
 
-        // 发送建立连接信息
-        mqSender.send(new SpeechBody(null, null, AudioStatus.START, this.sid, null));
 
         //加入set中
         WsManagement.addWebSocketSession(this.sid, session);
@@ -64,7 +63,7 @@ public class WsHandle extends TextWebSocketHandler {
 
         //授权失败
         if (!auth) {
-            this.sendMessage(WsStatus.UNAUTHORIZED, "appKey or secret illegal");
+            this.sendMessage(WsStatus.UNAUTHORIZED, "Signature Illegal");
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }else if (System.currentTimeMillis() - date > timeout) {
             // 连接超时，应该是客户端抓包后请求
@@ -73,6 +72,9 @@ public class WsHandle extends TextWebSocketHandler {
         }else{
 
             try {
+                // 发送建立连接信息
+                mqSender.send(new SpeechBody(null, null, AudioStatus.START, this.sid, null));
+
                 this.sendMessage(WsStatus.SUCCESS, "Connection success");
                 log.info("当前线程" + Thread.currentThread().getId() +  "有新窗口开始监听:" + sid + ",当前在线人数为:" + WsManagement.getOnlineCount());
             } catch (IOException e) {
@@ -120,8 +122,21 @@ public class WsHandle extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        super.handleTextMessage(session, message);
-        session.sendMessage(message);
+        if (session.isOpen()) {
+            super.handleTextMessage(session, message);
+//            session.sendMessage(message);
+            SpeechBody speech = AudioMessageCheck.check(message);
+
+            if (speech != null) {
+                // 设置sid
+                speech.setSid(sid);
+                mqSender.sendWithKeys(speech, sid);
+            }else {
+                // json 反序列失败
+                sendMessage(WsStatus.FORMAT_ERROR, "Message must be json format");
+            }
+        }
+
     }
 
     @Override
@@ -132,19 +147,19 @@ public class WsHandle extends TextWebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         super.handleTransportError(session, exception);
-
+        //从set中删除
+        WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
+        // 发送连接断开信息
+        mqSender.sendWithKeys(new SpeechBody(null, null, AudioStatus.END, this.sid, null), sid);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
-        // 发送建立连接信息
-        mqSender.send(new SpeechBody(null, null, AudioStatus.START, this.sid, null));
         //从set中删除
         WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
-
         // 发送连接断开信息
-        mqSender.send(new SpeechBody(null, null, AudioStatus.END, this.sid, null));
+        mqSender.sendWithKeys(new SpeechBody(null, null, AudioStatus.END, this.sid, null), sid);
 
         log.info("释放的sid为："+sid);
         log.info("" + WsManagement.getWebSocketMap().isEmpty());

@@ -65,10 +65,10 @@ public class EncryptUtil {
     }
 
     public static void main(String[] args) {
-        String signatureOrigin = "host: localhost:8000\n" +
-                "date: 1623399130\n" +
-                "appkey: uopcp9EeuFJgBo66FwYw\n" +
-                "GET /v1/asr";
+        String signatureOrigin =
+                "date: 1629858916192\n" +
+                "appKey: uopcp9EeuFJgBo66FwYw\n" +
+                "GET /v1/api/asr";
 
         String signature = null;
         try {

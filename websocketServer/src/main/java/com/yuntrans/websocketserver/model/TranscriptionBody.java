@@ -1,5 +1,6 @@
 package com.yuntrans.websocketserver.model;
 
+import com.google.gson.Gson;
 import com.yuntrans.websocketserver.wsEnum.TranscriptionStatus;
 import lombok.Data;
 
@@ -23,4 +24,11 @@ public class TranscriptionBody {
         this.status = status;
     }
 
+    public String toJson() {
+        return "{"
+                + "\"sid\": \"" + sid + "\","
+                + "\"result\": \"" + result + "\","
+                + "\"status\": \"" + status +"\""
+                + "}";
+    }
 }

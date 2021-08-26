@@ -38,13 +38,21 @@ public class MQSenderServiceImpl implements MQSenderService {
     }
 
     @Override
+    public boolean sendWithKeys(SpeechBody msg, String key) throws Exception {
+        Message<SpeechBody> message = MessageBuilder.withPayload(msg)
+                .setHeader(MessageConst.PROPERTY_KEYS, key)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        return source.speechOutput().send(message);
+    }
+
+    @Override
     public  boolean sendWithTags(SpeechBody msg, String tag) throws Exception {
         Message<SpeechBody> message = MessageBuilder.withPayload(msg)
                 .setHeader(MessageConst.PROPERTY_TAGS, tag)
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
                 .build();
-        boolean flag = source.speechOutput().send(message);
 
-        return flag;
+        return source.speechOutput().send(message);
     }
 }

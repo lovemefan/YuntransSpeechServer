@@ -59,9 +59,6 @@ spring:
 
 
 
-websocket:
-  timeout-time: 600000
-
 
 management:
   endpoints:
@@ -73,3 +70,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+# 项目自定义相关配置
+websocket:
+  # 是否开启签名校验，默认为true
+  signature:
+    enable: true
+  # websocket 超时时间
+  timeout-time: 600000
