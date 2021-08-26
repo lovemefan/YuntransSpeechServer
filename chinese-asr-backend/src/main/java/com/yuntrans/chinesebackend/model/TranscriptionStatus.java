@@ -8,5 +8,7 @@ package com.yuntrans.chinesebackend.model;
 public enum TranscriptionStatus {
     START,
     PARTIAL,
-    FINAL;
+    FINAL,
+    ENGINE_ERROR,
+    ENGINE_NOT_WORK
 }

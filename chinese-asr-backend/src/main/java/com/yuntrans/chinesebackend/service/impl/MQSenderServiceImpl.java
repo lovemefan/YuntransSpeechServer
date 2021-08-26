@@ -2,6 +2,7 @@ package com.yuntrans.chinesebackend.service.impl;
 
 
 
+import com.yuntrans.chinesebackend.model.SpeechBody;
 import com.yuntrans.chinesebackend.model.TranscriptionBody;
 import com.yuntrans.chinesebackend.service.MQSenderService;
 import com.yuntrans.chinesebackend.service.MySource;
@@ -38,6 +39,7 @@ public class MQSenderServiceImpl implements MQSenderService {
         return flag;
     }
 
+
     @Override
     public  boolean sendWithTags(TranscriptionBody msg, String tag) throws Exception {
         Message<TranscriptionBody> message = MessageBuilder.withPayload(msg)
@@ -47,6 +49,15 @@ public class MQSenderServiceImpl implements MQSenderService {
         boolean flag = source.transcriptionOutput().send(message);
 
         return flag;
+    }
+
+    @Override
+    public boolean sendWithKeys(TranscriptionBody msg, String key) throws Exception {
+        Message<TranscriptionBody> message = MessageBuilder.withPayload(msg)
+                .setHeader(MessageConst.PROPERTY_KEYS, key)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
+                .build();
+        return source.transcriptionOutput().send(message);
     }
 
 }

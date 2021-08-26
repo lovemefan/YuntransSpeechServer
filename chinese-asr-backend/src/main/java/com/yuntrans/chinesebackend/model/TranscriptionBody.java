@@ -14,10 +14,12 @@ public class TranscriptionBody {
     private String result;
     private TranscriptionStatus status;
 
+
     public TranscriptionBody(String sid, String result, TranscriptionStatus status) {
         this.sid = sid;
         this.result = result;
         this.status = status;
     }
+
 }
 

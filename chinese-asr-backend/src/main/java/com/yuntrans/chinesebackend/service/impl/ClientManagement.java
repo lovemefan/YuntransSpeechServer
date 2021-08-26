@@ -33,12 +33,33 @@ public class ClientManagement {
      * @throws InterruptedException
      */
     public static void addMessageQueue(String sid, SpeechBody speech) throws InterruptedException {
-        if (!messageQueue.containsKey(sid)) {
-            messageQueue.put(sid, new LinkedBlockingQueue<SpeechBody>());
-        }else {
+        if (messageQueue.containsKey(sid)) {
             messageQueue.get(sid).put(speech);
+        }else {
+            LinkedBlockingQueue<SpeechBody> queue = new LinkedBlockingQueue<SpeechBody>();
+            queue.put(speech);
+            messageQueue.put(sid, queue);
         }
 
+    }
+
+    public static void addMessageQueue(String sid) {
+        if (!messageQueue.containsKey(sid)) {
+            messageQueue.put(sid, new LinkedBlockingQueue<SpeechBody>());
+        }
+    }
+
+    /**
+     *  根据sid 返回队列末尾元素
+     * @param sid
+     * @return
+     */
+    public static SpeechBody getMessageFromQueue(String sid) throws InterruptedException {
+        if (messageQueue.containsKey(sid)) {
+            return messageQueue.get(sid).take();
+        }else {
+           return null;
+        }
     }
 
     /**
@@ -74,6 +95,13 @@ public class ClientManagement {
         session.sendMessage(new BinaryMessage(data));
     }
 
+    public static void closedWebsocket(String sid) throws IOException {
+        WebSocketSession session = getWebSocketSession(sid);
+        if (session != null) {
+            session.sendMessage(new TextMessage("{ \"signal\": \"end\" }"));
+            session.close();
+        }
+    }
 
 
 }
