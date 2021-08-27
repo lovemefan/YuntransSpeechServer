@@ -16,3 +16,5 @@
 
 ### 系统架构
 ![系统架构](https://github.com/lovemefan/YuntransSpeechServer/raw/master/resources/Yuntrans_Architecture.png)
+### 系统模块
+![系统模块](https://github.com/lovemefan/YuntransSpeechServer/raw/master/resources/Yuntrans_Module.png)
