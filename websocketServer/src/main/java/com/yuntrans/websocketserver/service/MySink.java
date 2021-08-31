@@ -11,4 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
 public interface MySink {
     @Input("transcription-zh-input")
     SubscribableChannel transcriptionInput();
+
+    @Input("transcription-other-input")
+    SubscribableChannel transcriptionOtherInput();
 }

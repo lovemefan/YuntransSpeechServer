@@ -10,5 +10,8 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface MySource {
     @Output("speech-zh-output")
-    MessageChannel speechOutput();
+    MessageChannel speechChineseOutput();
+
+    @Output("speech-other-output")
+    MessageChannel speechOtherOutput();
 }

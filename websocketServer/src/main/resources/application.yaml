@@ -14,15 +14,25 @@ spring:
 
     stream:
       bindings:
+        # 中文文本通道
         transcription-zh-input:
           content-type: application/json
           destination: transcription-zh
           group: transcription-zh-group
-
+        # 中文语音通道
         speech-zh-output:
           content-type: application/json
           destination: speech-zh
 
+
+        transcription-other-input:
+          content-type: application/json
+          destination: transcription-other
+          group: transcription-other-group
+
+        speech-other-output:
+          content-type: application/json
+          destination: speech-other
 
       rocketmq:
         binder:
@@ -39,6 +49,18 @@ spring:
             producer:
               group: speech-zh-group
               sync: false # 是否同步发送消息，默认为 false 异步。
+
+          transcription-other-input: # 定义name为output的binding
+            consumer:
+              enabled: true # 是否开启消费，默认为 true
+              broadcasting: false # 是否使用广播消费，默认为 false 使用集群消费，如果要使用广播消费值设成true。
+
+          speech-other-output:
+            # RocketMQ Producer 配置项，对应 RocketMQProducerProperties 类
+            producer:
+              group: speech-other-group
+              sync: false # 是否同步发送消息，默认为 false 异步。
+
   redis:
     database: 0
     host: 222.197.219.26

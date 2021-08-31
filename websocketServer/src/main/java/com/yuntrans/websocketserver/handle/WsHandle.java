@@ -71,7 +71,7 @@ public class WsHandle extends TextWebSocketHandler {
 
             try {
                 // 发送建立连接信息
-                mqSender.send(new SpeechBody(null, null, AudioStatus.START, session.getAttributes().get("sid").toString(), null));
+                mqSender.sendChineseMessage(new SpeechBody(null, null, AudioStatus.START, session.getAttributes().get("sid").toString(), null), session.getAttributes().get("sid").toString());
 
                 this.sendMessage(WsStatus.SUCCESS, "Connection success", session.getAttributes().get("sid").toString());
                 log.info("当前线程" + Thread.currentThread().getId() +  "有新窗口开始监听:" + session.getAttributes().get("sid").toString() + ",当前在线人数为:" + WsManagement.getOnlineCount());
@@ -129,7 +129,7 @@ public class WsHandle extends TextWebSocketHandler {
                 System.out.println(Thread.currentThread().getName() + " 收到speech： " + session.getAttributes().get("sid").toString());
                 // 设置sid
                 speech.setSid(session.getAttributes().get("sid").toString());
-                mqSender.sendWithKeys(speech, session.getAttributes().get("sid").toString());
+                mqSender.sendChineseMessage(speech, session.getAttributes().get("sid").toString());
             }else {
                 // json 反序列失败
                 sendMessage(WsStatus.FORMAT_ERROR, "Message must be json format", session.getAttributes().get("sid").toString());
@@ -149,7 +149,7 @@ public class WsHandle extends TextWebSocketHandler {
         //从set中删除
         WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
         // 发送连接断开信息
-        mqSender.sendWithKeys(new SpeechBody(null, null, AudioStatus.END, session.getAttributes().get("sid").toString(), null), session.getAttributes().get("sid").toString());
+        mqSender.sendChineseMessage(new SpeechBody(null, null, AudioStatus.END, session.getAttributes().get("sid").toString(), null), session.getAttributes().get("sid").toString());
     }
 
     @Override
@@ -158,7 +158,7 @@ public class WsHandle extends TextWebSocketHandler {
         //从set中删除
         WsManagement.deleteWebSocketSession(session.getAttributes().get("sid").toString());
         // 发送连接断开信息
-        mqSender.sendWithKeys(new SpeechBody(null, null, AudioStatus.END, session.getAttributes().get("sid").toString(), null), session.getAttributes().get("sid").toString());
+        mqSender.sendChineseMessage(new SpeechBody(null, null, AudioStatus.END, session.getAttributes().get("sid").toString(), null), session.getAttributes().get("sid").toString());
 
         log.info("释放的sid为："+ session.getAttributes().get("sid").toString());
         log.info("" + WsManagement.getWebSocketMap().isEmpty());

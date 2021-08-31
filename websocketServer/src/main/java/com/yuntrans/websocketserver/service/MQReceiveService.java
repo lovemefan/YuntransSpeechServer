@@ -11,5 +11,6 @@ import com.yuntrans.websocketserver.model.TranscriptionBody;
  */
 public interface MQReceiveService {
 
-    public void receive(TranscriptionBody message);
+    public void receiveChinese(TranscriptionBody message);
+    public void receiveOther(TranscriptionBody message);
 }

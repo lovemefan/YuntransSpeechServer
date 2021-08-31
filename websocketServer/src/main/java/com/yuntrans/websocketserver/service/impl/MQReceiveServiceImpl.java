@@ -25,7 +25,7 @@ public class MQReceiveServiceImpl implements MQReceiveService {
 
     @StreamListener("transcription-zh-input")
     @Override
-    public void receive(@Payload TranscriptionBody transcription) {
+    public void receiveChinese(@Payload TranscriptionBody transcription) {
         String sid = transcription.getSid();
 
         if (sid != null) {
@@ -39,5 +39,10 @@ public class MQReceiveServiceImpl implements MQReceiveService {
             }
             log.info("[onMessage][线程编号:{} 消息内容：{}]", Thread.currentThread().getId(), transcription.toString());
         }
+    }
+
+    @Override
+    public void receiveOther(TranscriptionBody message) {
+
     }
 }
