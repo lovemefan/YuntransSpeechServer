@@ -8,10 +8,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import java.util.concurrent.ThreadFactory;
+
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+@Slf4j
 public class YuntransServerBase {
-    private static final Logger log = LoggerFactory.getLogger(YuntransServerBase.class);
 
     private static final String BOSS_THREAD_NAME_PREFIX = "-boss-";
 

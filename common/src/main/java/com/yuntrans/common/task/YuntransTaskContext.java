@@ -91,7 +91,7 @@ public class YuntransTaskContext {
         }
 
         public String toString() {
-            return "NlsTaskContext.NlsTaskContextBuilder(taskId=" + this.taskId + ", namespace=" + this.namespace + ", appkey=" + this.appkey + ", userId=" + this.userId + ", executor=" + this.executor + ", grayService=" + this.grayService + ", delayer=" + this.delayer + ")";
+            return "YuntransTaskContext.YuntransTaskContextBuilder(taskId=" + this.taskId + ", namespace=" + this.namespace + ", appkey=" + this.appkey + ", userId=" + this.userId + ", executor=" + this.executor + ", grayService=" + this.grayService + ", delayer=" + this.delayer + ")";
         }
     }
 
@@ -177,7 +177,7 @@ public class YuntransTaskContext {
     }
 
     public String toString() {
-        return "NlsTaskContext(taskId=" + getTaskId() + ", namespace=" + getNamespace() + ", appkey=" + getAppkey() + ", userId=" + getUserId() + ", executor=" + getExecutor() + ", grayService=" + getGrayService() + ", delayer=" + getDelayer() + ")";
+        return "YuntransTaskContext(taskId=" + getTaskId() + ", namespace=" + getNamespace() + ", appkey=" + getAppkey() + ", userId=" + getUserId() + ", executor=" + getExecutor() + ", grayService=" + getGrayService() + ", delayer=" + getDelayer() + ")";
     }
 
     public YuntransTaskContext() {}

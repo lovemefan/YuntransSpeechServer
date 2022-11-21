@@ -10,13 +10,12 @@ import java.util.concurrent.TimeUnit;
 
 import com.yuntrans.common.exception.YuntransException;
 import com.yuntrans.common.status.YuntransStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
+@Slf4j
 public abstract class YuntransTaskBase<TResult> implements YuntransTask<TResult> {
-    private static final Logger log = LoggerFactory.getLogger(YuntransTaskBase.class);
-
     protected final YuntransTaskContext context;
 
     protected final YuntransTaskListener<TResult> listener;
