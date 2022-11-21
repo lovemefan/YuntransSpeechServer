@@ -1,0 +1,208 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+interface AuthListener << interface >>
+class AuthParams {
+  + AuthParams(): 
+  + AuthParams(String): 
+  - token: String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+   token: String
+}
+class AuthResult {
+  + AuthResult(): 
+  + AuthResult(String, long): 
+  - userId: String
+  - expireTime: long
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   expireTime: long
+   userId: String
+}
+interface AuthService << interface >>
+interface AuthTask << interface >>
+class Json {
+  + Json(): 
+  + toObjectList(String, Class<T>): List<T>
+  + toTreeObjectOrNull(String): ObjectNode?
+  + toObject(String, Class<T>): T
+  + toTreeObject(Object): ObjectNode
+  + toTree(Object): JsonNode
+  + toStringOrNull(Object): String?
+  + toObjectListOrNull(String, Class<T>): List<T>?
+  + toTreeObject(String): ObjectNode
+  + toStringWithIndent(Object): String
+  + toObjectMapOrNull(ObjectNode, Class<T>): Map<String, T>?
+  + toStringOrEmpty(Object): String
+  + toBytes(Object): byte[]
+  + toObject(String, TypeReference<T>): T
+  + toString(Object): String
+  + toStringWithIndentOrEmpty(Object): String
+  + newTreeArray(): ArrayNode
+  + toStringWithIndentOrNull(Object): String?
+  + toObjectOrNull(String, Class<T>): T?
+  + toBytesOrNull(Object): byte[]?
+  + toObjectOrNull(JsonNode, Class<T>): T?
+  + toTreeOrNull(String): JsonNode?
+  + newTreeObject(): ObjectNode
+  + toObjectMap(String, Class<T>): Map<String, T>
+  + toObjectMapOrNull(String, Class<T>): Map<String, T>?
+  + toTreeObjectOrNull(Object): ObjectNode?
+  + toObject(JsonNode, Class<T>): T
+  + toTreeArray(String): ArrayNode
+  + toTree(String): JsonNode
+  + toMap(ObjectNode): Map
+}
+class JsonException {
+  ~ JsonException(String): 
+  ~ JsonException(String, Throwable): 
+}
+class RetryableException {
+  + RetryableException(YuntransStatus): 
+}
+class StringUtils {
+  + StringUtils(): 
+  + bytesToHex(byte[]): String
+  + nullOrEmpty(String): boolean
+  + isStringOnlyAlphabet(String): boolean
+  + checkWordLength(String, int): boolean
+  + base64ToHex(String): String
+  + isBlank(String): boolean
+  + isNotBlank(String): boolean
+  + checkWordLength(String, int, int): boolean
+}
+interface YuntransEventHandler << interface >> {
+  + handleEvent(): void
+}
+class YuntransException {
+  + YuntransException(): 
+  + YuntransException(YuntransStatus): 
+  + YuntransException(int, String): 
+  - code: int
+  + log(Logger): void
+  + getName(String): String
+  + getText(String): String
+   code: int
+   serverErr: boolean
+   clientErr: boolean
+}
+interface YuntransService<TContext, TParams, TListener, TTask> << interface >> {
+  + newTask(TContext, TParams, TListener): TTask
+}
+class YuntransStatus {
+  - YuntransStatus(int, String, String, Throwable): 
+  + YuntransStatus(int, String, String): 
+  - code: int
+  - name: String
+  - cause: Throwable
+  - text: String
+  + modify(Throwable): YuntransStatus
+  + toException(): YuntransException
+  + toRetryableException(): RetryableException
+  + modify(String): YuntransStatus
+  + toString(): String
+  + modify(String, Throwable): YuntransStatus
+  + getStatusText(String): String
+   name: String
+   cause: Throwable
+   text: String
+   code: int
+}
+interface YuntransTask<TResult> << interface >> {
+  + cancel(): void
+  + getResult(long, TimeUnit): TResult
+   result: TResult
+}
+class YuntransTaskBase<TResult> {
+  # YuntransTaskBase(YuntransTaskContext, YuntransTaskListener<TResult>): 
+  - createTime: long
+  # taskStatus: int
+  # running: boolean
+  - executeHandler(YuntransEventHandler, boolean): void
+  # scheduleHandler(YuntransEventHandler): void
+  # defaultTo(T, T): T
+  - handleException(Exception): TResult
+  + getResult(long, TimeUnit): TResult
+  # triggerOnError(Throwable): void
+  # unbox(Integer, int): int
+  # scheduleHandler(YuntransEventHandler, int, TimeUnit): void
+  # triggerOnCompleted(TResult): void
+  # scheduleHandler(YuntransEventHandler, boolean): void
+  + updateStatus(int): boolean
+  # unbox(Boolean): boolean
+  + cancel(): void
+   taskId: String
+   createTime: long
+   running: boolean
+   taskStatus: int
+   result: TResult
+}
+class YuntransTaskConstants {
+  + YuntransTaskConstants(): 
+}
+class YuntransTaskContext {
+  + YuntransTaskContext(): 
+  + YuntransTaskContext(String, String, String, String, Executor, String, ScheduledThreadPoolExecutor): 
+  - grayService: String
+  - appkey: String
+  - userId: String
+  - taskId: String
+  - executor: Executor
+  - namespace: String
+  - delayer: ScheduledThreadPoolExecutor
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + builder(): YuntransTaskContextBuilder
+  + toString(): String
+   appkey: String
+   delayer: ScheduledThreadPoolExecutor
+   namespace: String
+   grayService: String
+   taskId: String
+   executor: Executor
+   userId: String
+}
+class YuntransTaskContextBuilder {
+  + YuntransTaskContextBuilder(): 
+  + namespace(String): YuntransTaskContextBuilder
+  + taskId(String): YuntransTaskContextBuilder
+  + build(): YuntransTaskContext
+  + delayer(ScheduledThreadPoolExecutor): YuntransTaskContextBuilder
+  + toString(): String
+  + executor(Executor): YuntransTaskContextBuilder
+  + appkey(String): YuntransTaskContextBuilder
+  + userId(String): YuntransTaskContextBuilder
+  + grayService(String): YuntransTaskContextBuilder
+}
+interface YuntransTaskListener<TResult> << interface >> {
+  + onCompleted(TResult): void
+  + onError(Throwable): void
+}
+class YuntransThreadFactory {
+  + YuntransThreadFactory(String): 
+  + newThread(Runnable): Thread
+}
+
+AuthListener                -[#008200,plain]-^  YuntransTaskListener       
+AuthService                 -[#008200,plain]-^  YuntransService            
+AuthTask                    -[#008200,plain]-^  YuntransTask               
+Json                        -[#595959,dashed]->  JsonException              : "«create»"
+RetryableException          -[#000082,plain]-^  YuntransException          
+YuntransStatus              -[#595959,dashed]->  RetryableException         : "«create»"
+YuntransStatus              -[#595959,dashed]->  YuntransException          : "«create»"
+YuntransTaskBase            -[#008200,dashed]-^  YuntransTask               
+YuntransTaskBase           "1" *-[#595959,plain]-> "context\n1" YuntransTaskContext        
+YuntransTaskBase           "1" *-[#595959,plain]-> "listener\n1" YuntransTaskListener       
+YuntransTaskContext         -[#595959,dashed]->  YuntransTaskContextBuilder : "«create»"
+YuntransTaskContextBuilder  +-[#820000,plain]-  YuntransTaskContext        
+YuntransTaskContextBuilder  -[#595959,dashed]->  YuntransTaskContext        : "«create»"
+@enduml
