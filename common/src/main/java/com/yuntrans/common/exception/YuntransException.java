@@ -1,6 +1,7 @@
 package com.yuntrans.common.exception;
 import java.util.Optional;
 
+import com.yuntrans.common.status.Status;
 import com.yuntrans.common.status.YuntransStatus;
 import org.slf4j.Logger;
 
@@ -23,7 +24,7 @@ public class YuntransException extends Exception {
         this.serviceName = null;
     }
 
-    public YuntransException(YuntransStatus status) {
+    public YuntransException(Status status) {
         super(status.getText(), status.getCause());
         this.code = status.getCode();
         this.name = status.getName();
@@ -79,16 +80,16 @@ public class YuntransException extends Exception {
     public void log(Logger logger) {
         if (this.serviceName == null) {
             if (this.code >= YuntransStatus.SERVER_ERROR.getCode()) {
-                logger.error("Got nls server error: code={}, name={}:", new Object[] { Integer.valueOf(this.code), this.name, this });
+                logger.error("Got nls server error: code={}, name={}:", this.code, this.name, this);
             } else if (logger.isDebugEnabled()) {
-                logger.debug("Got nls client error: code={}, name={}:", new Object[] { Integer.valueOf(this.code), this.name, this });
+                logger.debug("Got nls client error: code={}, name={}:", this.code, this.name, this);
             } else {
-                logger.warn("Got nls client error: code={}, name={}, text={}", new Object[] { Integer.valueOf(this.code), this.name, this.text });
+                logger.warn("Got nls client error: code={}, name={}, text={}", this.code, this.name, this.text);
             }
         } else if (this.code < YuntransStatus.SERVER_ERROR.getCode()) {
-            logger.warn("Got backend error: code={}, text={}", Integer.valueOf(this.code), getMessage());
+            logger.warn("Got backend error: code={}, text={}", this.code, getMessage());
         } else {
-            logger.error("Got backend error: code={}, text={}", Integer.valueOf(this.code), getMessage());
+            logger.error("Got backend error: code={}, text={}", this.code, getMessage());
         }
     }
 
